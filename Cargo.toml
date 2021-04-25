@@ -1,0 +1,26 @@
+[package]
+name = "deepfield"
+version = "0.1.0"
+authors = ["Mary Bush <mary.bush@hey.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+anyhow = "1.0.40"
+rand = { version = "0.8.3", features = ["small_rng"] }
+getrandom = { version = "0.2", features = ["js"] }
+wasm-bindgen = "0.2.63"
+web-sys = { version = "0.3.35", features = [ 'console', 'CanvasRenderingContext2d', 'TextMetrics', 'ImageData', 'CanvasGradient', 'HtmlCanvasElement', 'Document', 'Element', 'Window' ] }
+console_error_panic_hook = { version = "0.1.6", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.13"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"

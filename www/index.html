@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Deep Field</title>
+    <style>
+      body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+      }
+      pre {
+        line-height: 12px;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+      #title {
+        font: 40px sans-serif;
+        letter-spacing: 1em;
+      }
+      #game-canvas {
+        /* border: 1px solid black; */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Music from the Chandra deep field: https://soundcloud.com/nasa/chandra-deep-field-sonification -->
+    <audio id="soundtrack" autoplay loop src="assets/sonify3_cdfs.mp3"></audio>
+
+    <div id="title">DEEP FIELD</div>
+    <div id="hud"></div>
+    <canvas id="game-canvas"></canvas>
+    <script src="./bootstrap.js"></script>
+    <noscript>This page contains webassembly and javascript content; please enable javascript in your browser.</noscript>
+  </body>
+</html>
