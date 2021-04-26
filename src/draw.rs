@@ -1,20 +1,20 @@
+#![allow(dead_code)]
+
 use anyhow::*;
 use std::{
     f64::consts,
     cmp
 };
-use wasm_bindgen::{
-    prelude::*,
-    JsCast
-};
-use web_sys::{
-    CanvasRenderingContext2d,
-    HtmlCanvasElement,
-    window
-};
+use wasm_bindgen::JsCast;
+use web_sys::CanvasRenderingContext2d;
 
 use super::points::*;
 use super::utils::get_canvas_by_id;
+
+pub mod common_colors {
+    pub const BLACK: &str = "black";
+    pub const WHITE : &str = "white";
+}
 
 pub struct CanvasDrawParams {
     // canvas properties
@@ -161,7 +161,7 @@ impl Draw {
         &self,
         color: String
     ) {
-        self.draw(&CanvasDrawParams::new().fill(color), |ctx, params| {
+        self.draw(&CanvasDrawParams::new().fill(color), |ctx, _params| {
             ctx.fill_rect(0.0, 0.0, ctx.canvas().unwrap().width() as f64, ctx.canvas().unwrap().height() as f64);
         })
     }
@@ -172,7 +172,7 @@ impl Draw {
         p1: Point,
         params: &CanvasDrawParams
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.move_to(p0.x, p0.y);
             ctx.line_to(p1.x, p1.y);
             ctx.move_to(p1.x, p1.y);
@@ -185,7 +185,7 @@ impl Draw {
         p1: Point,
         params: &CanvasDrawParams
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.rect(
                 p0.x + 0.5,
                 p0.y + 0.5,
@@ -208,7 +208,7 @@ impl Draw {
         let y1: f64 = p1.y;
         let r: f64 = corner_radius; // for concision
         self.draw(
-            params, |ctx, params| {
+            params, |ctx, _params| {
             ctx.move_to(x0 + r, y0);
             ctx.line_to(x1 - r, y0);
             ctx.arc_to(x1, y0, x1, y0 + r, r).ok();
@@ -227,7 +227,7 @@ impl Draw {
         radius: f64,
         params: &CanvasDrawParams
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.arc(center.x, center.y, radius, 0.0, 2.0 * consts::PI).ok();
         })
     }
@@ -240,7 +240,7 @@ impl Draw {
         angle2: f64,
         params: &CanvasDrawParams // Good default: do_not_close = true
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.arc(center.x, center.y, radius, angle1, angle2).ok();
         })
     }
@@ -254,7 +254,7 @@ impl Draw {
         c1: Point,
         params: &CanvasDrawParams // Good defaults: do_not_fill = true, do_not_close = true
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.move_to(p0.x, p0.y);
             ctx.bezier_curve_to(c0.x, c0.y, c1.x, c1.y, p1.x, p1.y);
         });
@@ -269,7 +269,7 @@ impl Draw {
         pts: Vec<Point>,
         params: &CanvasDrawParams // #fff is a good default line_style 
     ) {
-        self.draw(params, |ctx, params| {
+        self.draw(params, |ctx, _params| {
             ctx.move_to(pts[0].x, pts[0].y);
             pts.iter().for_each(|p| {
                 ctx.line_to(p.x, p.y);

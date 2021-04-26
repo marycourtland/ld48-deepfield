@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 // I couldn't find a simple crate that does this and nothing else, so here we go.
 // Yes, some of this is copied from rust docs, because they just happen to use
 // Points as convenient examples.

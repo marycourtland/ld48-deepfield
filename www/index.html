@@ -15,6 +15,7 @@
         align-items: center;
         justify-content: center;
         margin: 0;
+        background: #acc1b3;;
       }
       pre {
         line-height: 12px;
@@ -24,19 +25,34 @@
       #title {
         font: 40px sans-serif;
         letter-spacing: 1em;
+        margin: 1em;
+      }
+      #game-container {
+        position: relative;
+        width: 800px;
+        height: 600px;
       }
       #game-canvas {
-        /* border: 1px solid black; */
+        width: 800px;
+        height: 600px;
+      }
+      .sprite {
+        position: absolute;
       }
     </style>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
   </head>
   <body>
     <!-- Music from the Chandra deep field: https://soundcloud.com/nasa/chandra-deep-field-sonification -->
-    <audio id="soundtrack" autoplay loop src="assets/sonify3_cdfs.mp3"></audio>
+    <audio id="soundtrack" loop src="assets/sonify3_cdfs.mp3"></audio>
 
     <div id="title">DEEP FIELD</div>
-    <div id="hud"></div>
-    <canvas id="game-canvas"></canvas>
+    <div id="game-container">
+      <div id="hud"></div>
+      <canvas id="game-canvas"></canvas>
+      <img class="sprite" style="bottom:20px; left: 10px;" id="telescope"  src="./assets/telescope.png">
+      <img class="sprite" style="bottom:20px; left: 200px;" id="tripod"  src="./assets/tripod.png">
+    </div>
     <script src="./bootstrap.js"></script>
     <noscript>This page contains webassembly and javascript content; please enable javascript in your browser.</noscript>
   </body>

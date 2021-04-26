@@ -1,0 +1,25 @@
+{
+    "display": {
+        "width": 800,
+        "height": 600
+    },
+    "objects": [
+        {
+            "name": "Sirius",
+            "category": "star",
+            "magnitude": -1.46,
+            "detail": [
+                {
+                    "level": 1,
+                    "magnitude": -1.46,
+                    "description": "You can see the Dog Star!"
+                },
+                {
+                    "level": 2,
+                    "magnitude": 8.44,
+                    "description": "You can see Sirius B, the double star to Sirius A!"
+                }
+            ]
+        }
+    ]
+}

@@ -1,22 +1,16 @@
 use anyhow::*;
 use web_sys::{
-    CanvasRenderingContext2d,
     HtmlCanvasElement,
     console,
-    window,
+    window
 };
 
 use wasm_bindgen::{
-    JsCast
+    JsCast,
+    JsValue
 };
 
 pub fn set_panic_hook() {
-    // When the `console_error_panic_hook` feature is enabled, we can call the
-    // `set_panic_hook` function at least once during initialization, and then
-    // we will get better error messages if our code ever panics.
-    //
-    // For more details see
-    // https://github.com/rustwasm/console_error_panic_hook#readme
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
 }
@@ -37,13 +31,16 @@ pub fn get_canvas_by_id(canvas_id: String) -> Result<HtmlCanvasElement> {
     Ok(canvas)
 }
 
+pub unsafe fn log1(s: &JsValue) {
+    console::log_1(s);
+}
 
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
 #[macro_export]
 macro_rules! log {
     ( $( $t:tt )* ) => {
         unsafe {
-            console::log_1(&format!( $( $t )* ).into());
+            utils::log1(&format!( $( $t )* ).into());
         }
     }
 }
