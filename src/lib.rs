@@ -1,4 +1,5 @@
-#[macro_use] mod utils;
+#![feature(hash_drain_filter)]
+#[macro_use] pub mod utils;
 mod draw;
 mod points;
 mod game;

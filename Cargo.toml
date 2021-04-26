@@ -16,7 +16,9 @@ anyhow = "1.0.40"
 rand = { version = "0.8.3", features = ["small_rng"] }
 getrandom = { version = "0.2", features = ["js"] }
 wasm-bindgen = "0.2.63"
-web-sys = { version = "0.3.35", features = [ 'console', 'CanvasRenderingContext2d', 'TextMetrics', 'ImageData', 'CanvasGradient', 'HtmlCanvasElement', 'Document', 'Element', 'Window' ] }
+wasm-bindgen-futures = "0.4.23"
+web-sys = { version = "0.3.50", features = [ 'console', 'CanvasRenderingContext2d', 'TextMetrics', 'ImageData', 'CanvasGradient', 'HtmlCanvasElement', 'Document', 'Element', 'Window' ] }
+gloo-timers = { version = "0.2.1", features = [ 'futures' ] }
 console_error_panic_hook = { version = "0.1.6", optional = true }
 
 [dev-dependencies]

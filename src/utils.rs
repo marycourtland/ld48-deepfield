@@ -1,13 +1,11 @@
 use anyhow::*;
 use web_sys::{
     HtmlCanvasElement,
-    console,
     window
 };
 
 use wasm_bindgen::{
-    JsCast,
-    JsValue
+    JsCast
 };
 
 pub fn set_panic_hook() {
@@ -27,20 +25,18 @@ pub fn get_canvas_by_id(canvas_id: String) -> Result<HtmlCanvasElement> {
     let canvas: HtmlCanvasElement = canvas
         .dyn_into::<HtmlCanvasElement>()
         .map_err(|_| anyhow!("Draw::from_canvas_id: the HTML element with id {} isn't a Canvas", canvas_id))?;
-        
-    Ok(canvas)
-}
 
-pub unsafe fn log1(s: &JsValue) {
-    console::log_1(s);
+    Ok(canvas)
 }
 
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
 #[macro_export]
 macro_rules! log {
     ( $( $t:tt )* ) => {
+        // Note: web_sys::console::log_1 is unsafe, but the macro doesn't recognize it
+        #[allow(unused_unsafe)]
         unsafe {
-            utils::log1(&format!( $( $t )* ).into());
+            web_sys::console::log_1(&format!( $( $t )* ).into());
         }
     }
 }

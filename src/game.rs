@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
-// use anyhow::*;
-// use std::collections::{HashMap, HashSet};
+use wasm_bindgen_futures::spawn_local;
+use gloo_timers::future::TimeoutFuture;
 use rand::prelude::*;
 use rand::rngs::SmallRng;
 use rand::distributions::WeightedIndex;
@@ -24,6 +24,8 @@ const GAME_CANVAS_ID: &str = "game-canvas";
 const COLOR_SKY: &str = "#08011a";
 const COLOR_GROUND_AT_DUSK: &str = "#24201a";
 
+const GAME_LOOP_MS: u32 = 1000;
+
 // const RANDOM_SEED: u64 = 29292929;
 
 pub fn start() {
@@ -36,68 +38,91 @@ pub fn start() {
     draw_stars(&draw, &mut rng, 800);
     draw_ground(&draw);
 
-    let objs = data::game_objects();
-    let scopes = data::game_telescopes();
-
-    // objs.iter().for_each(|d| {
-    //     log!("ASTRO OBJECT: {}", d);
-    // });
-    // scopes.iter().for_each(|(k, t)| {
-    //     log!("TELESCOPE: {} {:?}", k, t);
-    // });
-
-    let eye = scopes.get_by_key("eye").unwrap();
-
-    let mut game_state = types::GameState::init_with_scopes(
-        vec![eye]
-    );
-
-    game_state.fill_observables(&objs);
-
-    log_state(&game_state);
-    random_observation(&mut game_state, &mut rng);
-    log_state(&game_state);
-    random_observation(&mut game_state, &mut rng);
-    log_state(&game_state);
+    let mut g = Game::new();
+    g.init();
+    g.main_loop();
 }
 
-// Make a random observation.
-fn random_observation(game_state: &mut GameState, mut rng: &mut SmallRng) {
-    // choose a random observable
-    let obj = game_state.observables.iter().choose(&mut rng).unwrap().clone();
-    game_state.observables.remove(&obj);
-    let detail_level = obj.detail.iter().fold(0, |level, next_detail| {
-        if next_detail.power_needed <= game_state.max_power {
-            next_detail.level
-        }
-        else {
-            level
-        }
-    });
-    log!("> I am observing {}. {}", obj.name, obj.detail[detail_level].discovery_text);
-    game_state.observed.insert(obj, detail_level);
+struct Game {
+    pub state: GameState,
+    pub astro_objects: Vec<AstroObject>,
+    pub telescopes: TelescopeIndex,
+    pub rng: SmallRng,
+    pub generation: i32
 }
 
-fn log_state(game_state: &GameState) {
-    log!("\n====== OBSERVATION REPORT ======");
-    log!("I have these observing devices:");
+impl Game {
+    pub fn new() -> Self {
+        let mut game = Self {
+            state: GameState::init(),
+            astro_objects: vec![],//data::game_objects(),
+            telescopes: data::game_telescopes(),
+            rng: SmallRng::from_entropy(),
+            generation: 0
+        };
+        let mut objects = data::game_objects();
+        game.state.add_data(&mut objects);
+        game
+    }
 
-    game_state.telescopes.iter().for_each(|t| {
-        log!("  {} (resolving power: {})", t.name, t.max_power);
-    });
+    pub fn init(&mut self) {
+        // Start with just your eye
+        self.state.add_telescope(self.telescopes.get_by_key("eye").unwrap());
+    }
 
-    log!("I have observed these astronomical objects:");
-    game_state.observed.iter().for_each(|(o, detail_level)| {
-        log!("  {} (at detail level {})", o.name, detail_level);
-    });
+    #[cfg(test)]
+    pub fn test(&mut self) {
+        self.state.add_telescope(self.telescopes.get_by_key("eye").unwrap());
+        self.state.log();
+        self.random_observation();
+        self.random_observation();
+        self.random_observation();
+        self.random_observation();
+        self.state.log();
+    }
 
-    log!("With resolving power {}, I could also observe:", game_state.max_power);
-    game_state.observables.iter().for_each(|o| {
-        log!("  {} (needs power of {})", o, o.power_needed);
-    });
+    pub fn main_loop(mut self) {
+        log!("Game generation: {}", self.generation);
 
-    log!("================================");
+        self.acquire_telescopes();
+        self.random_observation();
+        self.state.log();
 
+        self.proceed();
+    }
+
+    pub fn proceed(mut self) {
+        self.generation += 1;
+        spawn_local(async {
+            TimeoutFuture::new(GAME_LOOP_MS).await;
+            self.main_loop();
+        });
+    }
+
+    pub fn acquire_telescopes(&mut self) {
+        // todo
+    }
+
+    // Make a random observation.
+    pub fn random_observation(&mut self) {
+        // choose a random observable
+        if self.state.observables.len() == 0 {
+            log!("> There's nothing I can observe right now.");
+            return;
+        }
+        let obj = self.state.observables.iter().choose(&mut self.rng).unwrap().clone();
+        self.state.observables.remove(&obj);
+        let detail_level = obj.detail.iter().fold(0, |level, next_detail| {
+            if next_detail.power_needed <= self.state.max_power {
+                next_detail.level
+            }
+            else {
+                level
+            }
+        });
+        log!("> You are observing {}. {}", obj.name, obj.detail[detail_level].discovery_text);
+        self.state.observed.insert(obj, detail_level);
+    }
 }
 
 fn configure_canvas(canvas_id: String, width: u32, height: u32) {
