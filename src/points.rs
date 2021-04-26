@@ -110,7 +110,7 @@ impl Neg for Point {
 impl Point {
     /// Initialize from cartesian coords
     pub fn xy(x: f64, y: f64) -> Self {
-        Self { x: x, y: y }
+        Self { x, y }
     }
 
     /// Initialize from polar coords
@@ -120,7 +120,7 @@ impl Point {
             y: r * th.sin()
         }
     }
-    
+
     pub fn scale(mut self, c: f64) -> Self {
         self.x *= c;
         self.y *= c;
@@ -164,13 +164,13 @@ pub fn mod360_symmetric(th: f64) -> f64 {
 /// Wrapper around Point with some extra values for relative positioning.
 #[derive(Debug, Clone, PartialEq)]
 pub enum RelativePoint {
-    POINT(Point),
-    CENTER
+    Point(Point),
+    Center
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Anchor {
-    CENTER,
+    Center,
     NW,
     NE,
     SE,
@@ -184,7 +184,7 @@ impl Anchor {
             Anchor::NE => Point::xy(-width, height),
             Anchor::SE => Point::xy(width, 0.0),
             Anchor::SW => Point::xy(-width, 0.0),
-            Anchor::CENTER => Point::xy(-width / 2.0, height / 2.0),
+            Anchor::Center => Point::xy(-width / 2.0, height / 2.0),
         }
     }
 }

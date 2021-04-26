@@ -68,10 +68,10 @@ fn random_observation(game_state: &mut GameState, mut rng: &mut SmallRng) {
     game_state.observables.remove(&obj);
     let detail_level = obj.detail.iter().fold(0, |level, next_detail| {
         if next_detail.power_needed <= game_state.max_power {
-            return next_detail.level;
+            next_detail.level
         }
         else {
-            return level;
+            level
         }
     });
     log!("> I am observing {}. {}", obj.name, obj.detail[detail_level].discovery_text);
@@ -110,6 +110,7 @@ fn draw_background(draw: &Draw) {
     draw.fill_all(COLOR_SKY.to_string());
 }
 
+#[allow(clippy::many_single_char_names)]
 fn draw_stars(draw: &Draw, mut rng: &mut SmallRng, n: usize) {
     // star magnitude distributions
     let star_mag_buckets = [

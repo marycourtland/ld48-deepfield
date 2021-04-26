@@ -28,7 +28,7 @@ impl GameState {
         }
     }
 
-    pub fn fill_observables(&mut self, objects: &Vec<AstroObject>) {
+    pub fn fill_observables(&mut self, objects: &[AstroObject]) {
         for obj in objects.iter() {
             if obj.power_needed <= self.max_power {
                 // NB: the HashSet will ensure uniqueness of objects.
@@ -128,7 +128,7 @@ pub trait Keyed {
 impl Keyed for TelescopeIndex {
     type KeyedItem = Telescope;
     fn get_by_key(&self, key: &str) -> Option<Telescope> {
-        self.get(key).map(|t| t.clone())
+        self.get(key).cloned()
     }
 }
 

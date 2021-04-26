@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+#![allow(clippy::many_single_char_names)]
 
 use anyhow::*;
 use std::{
@@ -122,7 +123,7 @@ impl Draw {
 
     pub fn from_canvas_id(canvas_id: String) -> Result<Self> {
         let canvas = get_canvas_by_id(canvas_id)?;
-            
+
         let context = canvas
             .get_context("2d").unwrap().unwrap()
             .dyn_into::<CanvasRenderingContext2d>()
@@ -137,7 +138,7 @@ impl Draw {
         &self,
         params: &CanvasDrawParams,
         draw_function: F
-    ) where F: Fn(&CanvasRenderingContext2d, &CanvasDrawParams) -> () {
+    ) where F: Fn(&CanvasRenderingContext2d, &CanvasDrawParams) {
         self.ctx.save();
         params.config_context(&self.ctx);
         self.ctx.begin_path();
@@ -267,7 +268,7 @@ impl Draw {
     pub fn polygon(
         &self,
         pts: Vec<Point>,
-        params: &CanvasDrawParams // #fff is a good default line_style 
+        params: &CanvasDrawParams // #fff is a good default line_style
     ) {
         self.draw(params, |ctx, _params| {
             ctx.move_to(pts[0].x, pts[0].y);
@@ -292,14 +293,14 @@ impl Draw {
         let text_width = text_lines.iter().fold(0, |max_width, next_line| {
             cmp::max(max_width, self.ctx.measure_text(next_line).unwrap().width().ceil() as i64)
         }) as f64;
-    
+
         let text_height: f64 = fontsize; // todo: get this to handle multiple lines
 
         let mut position = Point::xy(0.0, 0.0);
         let w = self.ctx.canvas().unwrap().width() as f64;
         let h = self.ctx.canvas().unwrap().height() as f64;
 
-        if let RelativePoint::CENTER = pos {
+        if let RelativePoint::Center = pos {
             position = Point::xy(
                 w / 2.0 - text_width / 2.0,
                 h / 2.0 + text_height / 2.0
@@ -360,19 +361,19 @@ impl Draw {
             let angle = dp.th();
             let length = dp.r();
             let w = params.line_width.unwrap_or(1) as f64;
-            
+
             // translate context to p0 and rotate it so that the line is horizontal
             ctx.save();
             ctx.translate(p0.x, p0.y).ok();
             ctx.rotate(angle).ok();
-            
+
             // Draw it
             let line = ctx.create_linear_gradient(0.0, 0.0, length, 0.0);
             line.add_color_stop(0.0, &color0).ok();
             line.add_color_stop(1.0, &color1).ok();
             ctx.set_fill_style(&line);
             ctx.fill_rect(0.0, -w / 2.0, length, w);
-            
+
             // Put the context back how it was before
             ctx.restore();
         });
@@ -381,16 +382,16 @@ impl Draw {
     pub fn in_each_quadrant<F>(
         &self,
         draw_function: F
-    ) where F: Fn() -> () {
+    ) where F: Fn() {
         // Do the drawing four times, NE, NW, SE, and SW from the origin
         draw_function(); // se quadrant
-        &self.ctx.scale(-1.0, 1.0).ok();
+        self.ctx.scale(-1.0, 1.0).ok();
         draw_function(); // sw quadrant
-        &self.ctx.scale(1.0, -1.0).ok();
+        self.ctx.scale(1.0, -1.0).ok();
         draw_function(); // nw quadrant
-        &self.ctx.scale(-1.0, 1.0).ok();
+        self.ctx.scale(-1.0, 1.0).ok();
         draw_function(); // ne quadrant
-        &self.ctx.scale(1.0, -1.0).ok();
+        self.ctx.scale(1.0, -1.0).ok();
     }
 
     /// Draw a smiley for testing :)
@@ -410,15 +411,15 @@ impl Draw {
         params: &CanvasDrawParams
     ) {
         self.circle(head_position, head_size, &params);
-    
+
         // Smile
         self.arc(head_position, 0.7 * head_size, ANGLE_EAST, ANGLE_WEST, &params);
-    
+
         // Eyes
         let eye_position_right = head_position + Point::xy(0.3,-0.2).scale(head_size);
         let eye_position_left = head_position + Point::xy(-0.3,-0.2).scale(head_size);
         let eye_position_center = head_position + Point::xy(0.0,-0.3).scale(head_size);
-        
+
         self.circle(eye_position_right, 0.1 * head_size, &params);
         self.circle(eye_position_left, 0.1 * head_size, &params);
         self.circle(eye_position_center, 0.1 * head_size, &params);
