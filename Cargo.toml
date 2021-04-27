@@ -1,7 +1,7 @@
 [package]
 name = "deepfield"
 version = "0.1.0"
-description = "A incremental game about looking deeper into the universe. Made for LD48."
+description = "An incremental game about looking deeper into the universe. Made for LD48."
 authors = ["Mary Bush <mary.bush@hey.com>"]
 edition = "2018"
 
