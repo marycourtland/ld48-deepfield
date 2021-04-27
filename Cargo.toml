@@ -17,8 +17,10 @@ rand = { version = "0.8.3", features = ["small_rng"] }
 getrandom = { version = "0.2", features = ["js"] }
 wasm-bindgen = "0.2.63"
 wasm-bindgen-futures = "0.4.23"
-web-sys = { version = "0.3.50", features = [ 'console', 'CanvasRenderingContext2d', 'TextMetrics', 'ImageData', 'CanvasGradient', 'HtmlCanvasElement', 'Document', 'Element', 'Window' ] }
+web-sys = { version = "0.3.50", features = [ 'MouseEvent', 'console', 'CanvasRenderingContext2d', 'TextMetrics', 'ImageData', 'CanvasGradient', 'CssStyleDeclaration', 'HtmlCanvasElement', 'Document', 'Element', 'Window' ] }
 gloo-timers = { version = "0.2.1", features = [ 'futures' ] }
+gloo-events = "0.1.1"
+futures = "0.3.14"
 console_error_panic_hook = { version = "0.1.6", optional = true }
 
 [dev-dependencies]

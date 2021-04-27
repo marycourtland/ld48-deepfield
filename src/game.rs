@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen::{JsCast};
 use gloo_timers::future::TimeoutFuture;
 use rand::prelude::*;
 use rand::rngs::SmallRng;
@@ -7,6 +8,8 @@ use rand::distributions::WeightedIndex;
 use rand::seq::IteratorRandom;
 use super::draw::*;
 use super::points::Point;
+use web_sys::{EventTarget, MouseEvent};
+use gloo_events::*;
 
 #[macro_use]
 mod types;
@@ -38,9 +41,33 @@ pub fn start() {
     draw_stars(&draw, &mut rng, 800);
     draw_ground(&draw);
 
+    let canvas = EventTarget::from(utils::query_html(&format!("#{}", GAME_CANVAS_ID)).unwrap());
+
+    let on_click = EventListener::new(&canvas, "click", move |event| {
+        let event = event.dyn_ref::<MouseEvent>().unwrap_throw();
+        let mouse_point = Point::xy(event.layer_x().into(), event.layer_y().into());
+        log!("Observing a spot in the sky: {} {}", mouse_point.x, mouse_point.y);
+    });
+
+    let cursor = utils::query_html("#eye-cursor").unwrap();
+
+    let move_cursor_icon = EventListener::new(&canvas, "mousemove", move |event| {
+        let event = event.dyn_ref::<MouseEvent>().unwrap_throw();
+        let mouse_point = Point::xy(event.layer_x().into(), event.layer_y().into());
+        let css = cursor.style();
+        css.set_property("top", &format!("{}px", mouse_point.y - 20.0)).ok();
+        css.set_property("left", &format!("{}px", mouse_point.x - 20.0)).ok();
+    });
+
+    // let these event listeners outlive this function
+    on_click.forget();
+    move_cursor_icon.forget();
+
     let mut g = Game::new();
     g.init();
     g.main_loop();
+
+
 }
 
 struct Game {
@@ -55,7 +82,7 @@ impl Game {
     pub fn new() -> Self {
         let mut game = Self {
             state: GameState::init(),
-            astro_objects: vec![],//data::game_objects(),
+            astro_objects: vec![],
             telescopes: data::game_telescopes(),
             rng: SmallRng::from_entropy(),
             generation: 0

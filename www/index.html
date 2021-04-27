@@ -5,6 +5,7 @@
     <title>Deep Field</title>
     <style>
       body {
+        font: 18px sans-serif;
         position: absolute;
         top: 0;
         left: 0;
@@ -23,14 +24,18 @@
         letter-spacing: 1px;
       }
       #title {
-        font: 40px sans-serif;
+        font: 40px;
         letter-spacing: 1em;
+        margin: 1em;
+      }
+      #subtitle {
         margin: 1em;
       }
       #game-container {
         position: relative;
         width: 800px;
         height: 600px;
+        cursor: none;
       }
       #game-canvas {
         width: 800px;
@@ -38,6 +43,9 @@
       }
       .sprite {
         position: absolute;
+      }
+      #eye-cursor {
+        pointer-events: none;
       }
     </style>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
@@ -47,11 +55,12 @@
     <audio id="soundtrack" loop src="assets/sonify3_cdfs.mp3"></audio>
 
     <div id="title">DEEP FIELD</div>
+    <div id="subtitle">Hey, this is my unfinished game for LD 48! Open up the browser console to see more.</div>
     <div id="game-container">
+      <img class="sprite" id="eye-cursor" src="./assets/telescopes/eye.png" style="top:0px; left: 0px;">
       <div id="hud"></div>
       <canvas id="game-canvas"></canvas>
       <img class="sprite" style="bottom:20px; left: 10px;" id="telescope"  src="./assets/telescope.png">
-      <img class="sprite" style="bottom:20px; left: 200px;" id="tripod"  src="./assets/tripod.png">
     </div>
     <script src="./bootstrap.js"></script>
     <noscript>This page contains webassembly and javascript content; please enable javascript in your browser.</noscript>
